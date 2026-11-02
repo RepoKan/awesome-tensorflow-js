@@ -68,6 +68,14 @@ reviews:
 
   # Code-generation suggestions are not relevant to the current Markdown-only repo.
   finishing_touches:
+    # Editing tools are enabled; the GitHub App still needs appropriate permissions.
+    # The ongoing Autofix task is activated separately on each PR.
+    autofix:
+      enabled: true
+    fix_ci:
+      enabled: true
+    resolve_merge_conflict:
+      enabled: true
     docstrings:
       enabled: false
     unit_tests:
