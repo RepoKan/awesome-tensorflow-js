@@ -1,0 +1,11 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+# Explicitly keep automatic PR approvals disabled; human review remains required.
+# Each path-based override must include a concrete repository-relative selector.
+reviews:
+  auto_approvals:
+    enabled: false
+    overrides:
+      - paths:
+          - "README.md"
+          - "CONTRIBUTING.md"
+        enabled: false
