@@ -1,11 +1,80 @@
 # yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
-# Explicitly keep automatic PR approvals disabled; human review remains required.
-# Each path-based override must include a concrete repository-relative selector.
+# Documentation-first TensorFlow.js resource directory.
+# Human approval and CI are separate merge gates; an AI review never replaces them.
+language: "en-US"
+
 reviews:
+  profile: "chill"
+  auto_review:
+    enabled: true
+    auto_incremental_review: true
+    drafts: false
+
+  # A single global setting avoids redundant, potentially invalid overrides.
   auto_approvals:
     enabled: false
-    overrides:
-      - paths:
-          - "README.md"
-          - "CONTRIBUTING.md"
-        enabled: false
+
+  pre_merge_checks:
+    # There is no application source code or docstring surface in this repository.
+    docstrings:
+      mode: "off"
+    title:
+      mode: "warning"
+      requirements: >
+        Describe the actual change clearly and specifically. A conventional
+        type(scope): summary or a concise action-oriented title is acceptable.
+    description:
+      mode: "warning"
+    custom_checks:
+      - name: "New resources follow contribution scope"
+        mode: "warning"
+        instructions: |
+          Apply only when a pull request adds curated resource entries to README.md.
+          Otherwise pass as not applicable.
+          Compare newly added resource URLs with existing README.md entries.
+          Flag duplicate destinations or more than one new resource entry in one
+          pull request, as CONTRIBUTING.md requests one resource link per PR.
+          Do not count navigation links, badges, headings or prose URLs as entries.
+          Report specific added lines and a correction supported by the diff.
+          Do not flag unrelated or pre-existing README.md imperfections.
+
+  path_instructions:
+    - path: "README.md"
+      instructions: |
+        Review added or materially modified lines only. For new resources,
+        verify TensorFlow.js relevance, placement in the correct category,
+        reasonable alphabetical order within that category, descriptive link
+        text, valid Markdown and a concise sentence-case description ending
+        with a period when that category uses descriptions.
+        Prefer HTTPS where available, but do not claim a URL is broken without
+        verification. Ignore unchanged historical entries and formatting.
+    - path: "CONTRIBUTING.md"
+      instructions: |
+        Check revised guidelines for clarity and consistency with README.md,
+        including the one-resource-per-PR convention. Do not apply new rules
+        retroactively to unchanged content.
+    - path: ".coderabbit.yaml"
+      instructions: |
+        Validate settings against the current CodeRabbit schema. Retain
+        automatic reviews and keep automatic approvals disabled. If an
+        auto-approval override is added, require nonempty teams or paths.
+        Flag contradictory or duplicated rules, and do not conflate a
+        CodeRabbit review with independent approval or successful CI.
+    - path: ".github/workflows/**"
+      instructions: |
+        For newly added or modified workflows, review least-privilege token
+        permissions, pinned third-party actions, and safe handling of secrets
+        and untrusted pull request code. Report risks in the changed lines.
+
+  # Code-generation suggestions are not relevant to the current Markdown-only repo.
+  finishing_touches:
+    docstrings:
+      enabled: false
+    unit_tests:
+      enabled: false
+
+knowledge_base:
+  code_guidelines:
+    enabled: true
+    filePatterns:
+      - "CONTRIBUTING.md"
