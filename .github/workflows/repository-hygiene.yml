@@ -63,11 +63,16 @@ jobs:
                '--', '*.md'],
               check=True, text=True, capture_output=True)
           current_file = ''
+          in_hunk = False
           failures = []
           for line in result.stdout.splitlines():
-              if line.startswith('+++ b/'):
+              if line.startswith('diff --git '):
+                  in_hunk = False
+              elif not in_hunk and line.startswith('+++ b/'):
                   current_file = line[6:]
-              elif line.startswith('+') and not line.startswith('+++'):
+              elif line.startswith('@@ '):
+                  in_hunk = True
+              elif in_hunk and line.startswith('+'):
                   added = line[1:]
                   if added.rstrip(' \t') != added:
                       failures.append(current_file)
