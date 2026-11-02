@@ -1,12 +1,11 @@
 name: Documentation and CodeRabbit validation
 
 on:
+  # CI always runs on pull requests, not just Markdown/configuration changes.
   pull_request:
+  # Also verify repository health after an authorized merge to master.
+  push:
     branches: [master]
-    paths:
-      - '.coderabbit.yaml'
-      - '**/*.md'
-      - '.github/workflows/**'
   workflow_dispatch:
 
 permissions:
@@ -38,6 +37,13 @@ jobs:
           reviews = config.fetch('reviews')
           raise 'Automatic reviews must stay enabled' unless reviews.dig('auto_review', 'enabled') == true
           raise 'Automatic approvals must stay disabled' unless reviews.dig('auto_approvals', 'enabled') == false
+          raise 'Automatic PR incremental reviews must remain enabled' unless reviews.dig('auto_review', 'auto_incremental_review') == true
+          raise 'Automatic review pause must remain disabled' unless reviews.dig('auto_review', 'auto_pause_after_reviewed_commits') == 0
+          raise 'Reviews must cover all PR target branches' unless reviews.dig('auto_review', 'base_branches')&.include?('.*')
+          raise 'Automated bot approvals must remain disabled' unless reviews['request_changes_workflow'] == false
+          raise 'Issue enrichment must be enabled' unless config.dig('issue_enrichment', 'auto_enrich', 'enabled') == true
+          raise 'Automatic issue planning must be enabled' unless config.dig('issue_enrichment', 'planning', 'auto_planning', 'enabled') == true
+          raise 'Automatic issue label mutation must stay disabled' unless config.dig('issue_enrichment', 'labeling', 'auto_apply_labels') == false
           fixes = reviews.fetch('finishing_touches')
           %w[autofix fix_ci resolve_merge_conflict].each do |key|
             raise "#{key} must remain enabled" unless fixes.dig(key, 'enabled') == true
