@@ -5,10 +5,16 @@ language: "en-US"
 
 reviews:
   profile: "chill"
+  # Never replace a maintainer's approval with a bot approval.
+  request_changes_workflow: false
   auto_review:
     enabled: true
     auto_incremental_review: true
+    # Re-review every PR push until the PR is complete (subject to rate limits).
+    auto_pause_after_reviewed_commits: 0
     drafts: false
+    base_branches:
+      - ".*"
 
   # A single global setting avoids redundant, potentially invalid overrides.
   auto_approvals:
@@ -86,3 +92,14 @@ knowledge_base:
     enabled: true
     filePatterns:
       - "CONTRIBUTING.md"
+
+# Issue enrichment is issue analysis, not an automatic code review or fix.
+issue_enrichment:
+  auto_enrich:
+    enabled: true
+  planning:
+    enabled: true
+    auto_planning:
+      enabled: true
+  labeling:
+    auto_apply_labels: false
