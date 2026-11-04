@@ -17,9 +17,9 @@ reviews:
     base_branches:
       - ".*"
 
-  # Bot approvals are limited to low-risk changes and never replace human review or CI.
+  # Preserve the repository CI safeguard; enabling bot approvals needs a separate policy change.
   auto_approvals:
-    enabled: true
+    enabled: false
     allow_author_approval: false
     max_merge_risk: low
 
@@ -64,8 +64,8 @@ reviews:
         retroactively to unchanged content.
     - path: ".coderabbit.yaml"
       instructions: |
-        Validate settings against the current CodeRabbit schema. Retain automatic reviews. Keep auto-approvals restricted to
-        low merge risk and prohibit author self-approval. Flag contradictory
+        Validate settings against the current CodeRabbit schema. Retain automatic reviews. Keep automatic approvals disabled and prohibit
+        author self-approval. Flag contradictory
         or duplicated rules. Bot approval does not replace independent human
         review, successful CI, or repository branch protection.
     - path: ".github/workflows/**"
