@@ -36,7 +36,9 @@ jobs:
           raise 'Configuration must be a mapping' unless config.is_a?(Hash)
           reviews = config.fetch('reviews')
           raise 'Automatic reviews must stay enabled' unless reviews.dig('auto_review', 'enabled') == true
-          raise 'Automatic approvals must stay disabled' unless reviews.dig('auto_approvals', 'enabled') == false
+          raise 'Automatic approvals must be enabled' unless reviews.dig('auto_approvals', 'enabled') == true
+           raise 'Automatic approvals must be limited to low merge risk' unless reviews.dig('auto_approvals', 'max_merge_risk') == 'low'
+           raise 'Author self-approval commands must remain disabled' unless reviews.dig('auto_approvals', 'allow_author_approval') == false
           raise 'Automatic PR incremental reviews must remain enabled' unless reviews.dig('auto_review', 'auto_incremental_review') == true
           raise 'Automatic review pause must remain disabled' unless reviews.dig('auto_review', 'auto_pause_after_reviewed_commits') == 0
           base_branches = reviews.dig('auto_review', 'base_branches')
