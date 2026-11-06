@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
 # Documentation-first TensorFlow.js resource directory.
-# Human approval and CI are separate merge gates; an AI review never replaces them.
+# CodeRabbit review and required CI are separate gates; RepoKan authorizes each final merge.
 language: "en-US"
 tone_instructions: >-
   Be concise, direct, and constructive. Prioritize verified problems in changed
@@ -17,10 +17,12 @@ reviews:
     base_branches:
       - ".*"
 
-  # A single global setting avoids redundant, potentially invalid overrides.
-  # Never replace a maintainer's approval with a bot approval.
+  # Permit low-risk bot approvals; author approval commands stay disabled.
+  # Bot approval never bypasses GitHub branch rules or required CI.
   auto_approvals:
-    enabled: false
+    enabled: true
+    allow_author_approval: false
+    max_merge_risk: low
 
   pre_merge_checks:
     # There is no application source code or docstring surface in this repository.
@@ -64,10 +66,11 @@ reviews:
     - path: ".coderabbit.yaml"
       instructions: |
         Validate settings against the current CodeRabbit schema. Retain
-        automatic reviews and keep automatic approvals disabled. If an
-        auto-approval override is added, require nonempty teams or paths.
-        Flag contradictory or duplicated rules, and do not conflate a
-        CodeRabbit review with independent approval or successful CI.
+        automatic reviews and low-risk automatic approvals; prohibit author
+        self-approval commands. Flag contradictory or duplicated rules and
+        changes that weaken or self-validate their own safety gates. A completed
+        CodeRabbit check is not proof that review findings are resolved;
+        required CI and owner merge authorization remain separate.
     - path: ".github/workflows/**"
       instructions: |
         For newly added or modified workflows, review least-privilege token
