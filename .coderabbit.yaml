@@ -23,6 +23,8 @@ reviews:
     enabled: true
     allow_author_approval: false
     max_merge_risk: low
+    # Requires an Advanced security architecture risk assessment at this SHA.
+    max_security_risk: low
     # Policy or CI enforcement must never qualify for bot-only approval.
     overrides:
       - enabled: false
