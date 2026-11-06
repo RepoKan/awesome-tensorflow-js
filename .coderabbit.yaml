@@ -68,14 +68,21 @@ reviews:
         Validate settings against the current CodeRabbit schema. Retain
         automatic reviews and low-risk automatic approvals; prohibit author
         self-approval commands. Flag contradictory or duplicated rules and
-        changes that weaken or self-validate their own safety gates. A completed
-        CodeRabbit check is not proof that review findings are resolved;
-        required CI and owner merge authorization remain separate.
+        changes that weaken or self-validate their own safety gates.
+        Treat relaxed risk limits, broader approval permissions, disabled
+        review checks, and ruleset bypasses as high merge-risk indicators.
+        Check that controls are independently enforced and not validated only
+        by an assertion changed in the same PR. A completed CodeRabbit check
+        is not proof that findings are resolved; CI and owner merge
+        authorization remain separate.
     - path: ".github/workflows/**"
       instructions: |
         For newly added or modified workflows, review least-privilege token
         permissions, pinned third-party actions, and safe handling of secrets
-        and untrusted pull request code. Report risks in the changed lines.
+        and untrusted pull request code. Treat changes to required checks,
+        policy validation, approval enforcement, or workflow permissions as
+        sensitive. Flag self-validating policy/CI edits, missing tests, and
+        any weakening of protected-branch safety; report specific evidence.
 
   # Code-generation suggestions are not relevant to the current Markdown-only repo.
   finishing_touches:
