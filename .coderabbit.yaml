@@ -17,11 +17,10 @@ reviews:
     base_branches:
       - ".*"
 
-  # Owner-authorized public-repository bot approval policy; human review and CI remain separate merge gates.
+  # A single global setting avoids redundant, potentially invalid overrides.
+  # Never replace a maintainer's approval with a bot approval.
   auto_approvals:
-    enabled: true
-    allow_author_approval: false
-    max_merge_risk: low
+    enabled: false
 
   pre_merge_checks:
     # There is no application source code or docstring surface in this repository.
@@ -64,10 +63,11 @@ reviews:
         retroactively to unchanged content.
     - path: ".coderabbit.yaml"
       instructions: |
-        Validate settings against the current CodeRabbit schema. Retain automatic reviews. Require low-risk automatic approvals and prohibit
-        author self-approval commands. Flag contradictory
-        or duplicated rules. Bot approval does not replace independent human
-        review, successful CI, or repository branch protection.
+        Validate settings against the current CodeRabbit schema. Retain
+        automatic reviews and keep automatic approvals disabled. If an
+        auto-approval override is added, require nonempty teams or paths.
+        Flag contradictory or duplicated rules, and do not conflate a
+        CodeRabbit review with independent approval or successful CI.
     - path: ".github/workflows/**"
       instructions: |
         For newly added or modified workflows, review least-privilege token
