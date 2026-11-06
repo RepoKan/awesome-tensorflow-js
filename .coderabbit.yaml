@@ -23,6 +23,13 @@ reviews:
     enabled: true
     allow_author_approval: false
     max_merge_risk: low
+    # Policy or CI enforcement must never qualify for bot-only approval.
+    overrides:
+      - enabled: false
+        paths:
+          - ".coderabbit.yaml"
+          - ".github/workflows/**"
+          - ".github/CODEOWNERS"
 
   pre_merge_checks:
     # There is no application source code or docstring surface in this repository.
