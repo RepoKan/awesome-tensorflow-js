@@ -31,6 +31,7 @@ reviews:
         paths:
           - ".coderabbit.yaml"
           - ".github/workflows/**"
+          - ".github/scripts/**"
           - ".github/CODEOWNERS"
           - "CODEOWNERS"
           - "docs/CODEOWNERS"
@@ -95,7 +96,14 @@ reviews:
         sensitive. Flag self-validating policy/CI edits, missing tests, and
         any weakening of protected-branch safety; report specific evidence.
 
-  # Code-generation suggestions are not relevant to the current Markdown-only repo.
+    - path: ".github/scripts/**"
+      instructions: |
+        Review the policy validator and its regression tests together. Require
+        exact key/type checks, global and per-override risk caps, unconditional
+        sensitive-path protection, fail-closed parse errors, and negative tests.
+        PR-controlled tests are not independent approval or merge authorization.
+
+  # Application scaffolding is out of scope; CI policy tests are maintained explicitly.
   finishing_touches:
     # Editing tools are enabled; the GitHub App still needs appropriate permissions.
     # The ongoing Autofix task is activated separately on each PR.
