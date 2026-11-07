@@ -1,0 +1,4 @@
+/.github/scripts/** @RepoKan
+/.github/workflows/** @RepoKan
+/.coderabbit.yaml @RepoKan
+/.github/CODEOWNERS @RepoKan
