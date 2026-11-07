@@ -32,6 +32,8 @@ reviews:
           - ".coderabbit.yaml"
           - ".github/workflows/**"
           - ".github/CODEOWNERS"
+          - "CODEOWNERS"
+          - "docs/CODEOWNERS"
 
   pre_merge_checks:
     # There is no application source code or docstring surface in this repository.
