@@ -27,30 +27,15 @@ jobs:
           persist-credentials: false
           fetch-depth: 0
 
+      # These checks detect policy regressions; they are not independent approval.
+      # Do not move PR-controlled code to pull_request_target or grant write access.
+      - name: Test CodeRabbit policy rejection cases
+        shell: bash
+        run: ruby .github/scripts/test_coderabbit_policy.rb
+
       - name: Validate CodeRabbit YAML and safety gates
         shell: bash
-        run: |
-          ruby - <<'RUBY'
-          require 'yaml'
-          config = YAML.safe_load_file('.coderabbit.yaml')
-          raise 'Configuration must be a mapping' unless config.is_a?(Hash)
-          reviews = config.fetch('reviews')
-          raise 'Automatic reviews must stay enabled' unless reviews.dig('auto_review', 'enabled') == true
-          raise 'Automatic approvals must stay disabled' unless reviews.dig('auto_approvals', 'enabled') == false
-          raise 'Automatic PR incremental reviews must remain enabled' unless reviews.dig('auto_review', 'auto_incremental_review') == true
-          raise 'Automatic review pause must remain disabled' unless reviews.dig('auto_review', 'auto_pause_after_reviewed_commits') == 0
-          base_branches = reviews.dig('auto_review', 'base_branches')
-          raise 'Reviews must cover all PR target branches' unless base_branches.is_a?(Array) && base_branches.include?('.*')
-          raise 'Issue enrichment must be enabled' unless config.dig('issue_enrichment', 'auto_enrich', 'enabled') == true
-          raise 'Issue planning must be enabled' unless config.dig('issue_enrichment', 'planning', 'enabled') == true
-          raise 'Automatic issue planning must be enabled' unless config.dig('issue_enrichment', 'planning', 'auto_planning', 'enabled') == true
-          raise 'Automatic issue label mutation must stay disabled' unless config.dig('issue_enrichment', 'labeling', 'auto_apply_labels') == false
-          fixes = reviews.fetch('finishing_touches')
-          %w[autofix fix_ci resolve_merge_conflict].each do |key|
-            raise "#{key} must remain enabled" unless fixes.dig(key, 'enabled') == true
-          end
-          puts 'CodeRabbit YAML and safety gates: PASS'
-          RUBY
+        run: ruby .github/scripts/coderabbit_policy.rb .coderabbit.yaml
 
       - name: Check only new Markdown lines for trailing whitespace
         if: github.event_name == 'pull_request'
