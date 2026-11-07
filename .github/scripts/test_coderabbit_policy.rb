@@ -91,14 +91,11 @@ begin
   [true, nil, 0, 'false', 'FALSE'].each do |value|
     bad("author approval rejects #{value.inspect}", changed { |c| approval(c)['allow_author_approval'] = value }, /allow_author_approval/)
   end
-  [nil, 0, 'false', 'true'].each do |value|
+  [true, nil, 0, 'false', 'true'].each do |value|
     bad("override enabled rejects #{value.inspect}", changed do |c|
       approval(c)['overrides'] << {'paths' => ['README.md'], 'enabled' => value}
     end, /enabled/)
   end
-  good('explicit boolean enabled keeps inherited low caps', changed do |c|
-    approval(c)['overrides'] << {'paths' => ['README.md'], 'enabled' => true}
-  end)
 
   {'Reviews' => 'reviews', 'reviews ' => 'reviews', "rev\u0456ews" => 'reviews'}.each do |wrong, correct|
     bad("root key #{wrong.inspect}", changed { |c| c[wrong] = c.delete(correct) }, /keys|identifiers/)
@@ -121,7 +118,7 @@ begin
     end, /sensitive path/)
   end
   bad('protective override cannot be team-limited', changed { |c| approval(c)['overrides'][0]['teams'] = ['example/reviewers'] }, /unconditional/)
-  bad('protective override cannot be enabled', changed { |c| approval(c)['overrides'][0]['enabled'] = true }, /unconditional/)
+  bad('protective override cannot be enabled', changed { |c| approval(c)['overrides'][0]['enabled'] = true }, /enabled/)
   bad('protective override must explicitly be disabled', changed { |c| approval(c)['overrides'][0].delete('enabled') }, /unconditional/)
   bad('negation cannot carve out protective paths', changed { |c| approval(c)['overrides'][0]['paths'] << '!.github/workflows/**' }, /without exclusions/)
   [nil, false, {}, [], 'bad'].each do |value|
@@ -134,7 +131,7 @@ begin
   [nil, [], 'README.md', [''], [' README.md'], [false], ['README.md', 'README.md'], ["README.md\n"]].each do |value|
     bad("malformed paths #{value.inspect}", changed { |c| approval(c)['overrides'] << {'paths' => value} }, /paths/)
   end
-  [nil, [], [false], ['reviewers'], ['example/reviewers ']].each do |value|
+  [nil, [], [false], ['reviewers'], ['example/reviewers '], ['example/my_team']].each do |value|
     bad("malformed team scope #{value.inspect}", changed { |c| approval(c)['overrides'] << {'teams' => value} }, /teams/)
   end
   bad('too many distinct teams', changed do |c|

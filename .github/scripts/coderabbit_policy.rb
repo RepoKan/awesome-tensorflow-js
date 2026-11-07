@@ -125,7 +125,7 @@ module CodeRabbitPolicy
       path = "reviews.auto_approvals.overrides[#{i}]"
       mapping(rule, path, OVERRIDE_KEYS)
       if rule.key?('enabled')
-        check(rule['enabled'].equal?(true) || rule['enabled'].equal?(false), "#{path}.enabled: expected a boolean")
+        exact(rule['enabled'], false, "#{path}.enabled")
       end
       # Omitted risk fields inherit the global low limit. Explicit null, unknown,
       # incorrectly cased and risk-raising values fail, even on disabled rules.
@@ -138,7 +138,7 @@ module CodeRabbitPolicy
       string_list(rule['paths'], "#{path}.paths") if rule.key?('paths')
       if rule.key?('teams')
         teams = string_list(rule['teams'], "#{path}.teams")
-        check(teams.all? { |team| team.match?(/\A[A-Za-z0-9][A-Za-z0-9-]*\/[A-Za-z0-9][A-Za-z0-9_-]*\z/) },
+        check(teams.all? { |team| team.match?(/\A[A-Za-z0-9][A-Za-z0-9-]*\/[A-Za-z0-9][A-Za-z0-9-]*\z/) },
               "#{path}.teams: use organization/team-slug")
       end
     end
